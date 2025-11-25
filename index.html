@@ -1,0 +1,574 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Verificador de Senha — Design Premium</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b0b0d;
+      --card:#0f0f11;
+      --muted:#9a9aa0;
+      --accent1:#ff7bd7;
+      --accent2:#9b5cff;
+      --glass: rgba(255,255,255,0.03);
+      --success:#27d08a;
+      --warn:#ffb86b;
+      --danger:#ff6b6b;
+      --soft-border: rgba(255,255,255,0.03);
+      --shadow: 0 6px 18px rgba(0,0,0,0.6);
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(155,92,255,0.08), transparent),
+                  radial-gradient(1000px 500px at 90% 90%, rgba(255,123,215,0.06), transparent),
+                  linear-gradient(180deg,#070709 0%, #0b0b0d 100%);
+      color:#e9e9ee;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+      padding:36px;
+      gap:20px;
+      min-height:100vh;
+    }
+
+    /* container */
+    .wrap{
+      width:100%;
+      max-width:760px;
+    }
+
+    /* top nav (decorative) */
+    .nav{
+      display:flex;
+      gap:18px;
+      align-items:center;
+      margin-bottom:20px;
+      color:var(--muted);
+      font-weight:600;
+      font-size:14px;
+    }
+    .nav .home{
+      background:linear-gradient(90deg,var(--accent1),var(--accent2));
+      color:#111;
+      padding:8px 12px;
+      border-radius:12px;
+      box-shadow: 0 6px 18px rgba(155,92,255,0.12), inset 0 -6px 12px rgba(0,0,0,0.35);
+    }
+
+    /* header card */
+    .hero{
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:14px;
+      padding:22px;
+      margin-bottom:18px;
+      box-shadow: var(--shadow);
+      border:1px solid var(--soft-border);
+    }
+    .hero h1{
+      margin:0;
+      font-size:24px;
+      font-weight:800;
+      letter-spacing:-0.3px;
+    }
+    .hero p{margin:8px 0 0;color:var(--muted);font-size:14px}
+
+    /* main card */
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:16px;
+      padding:22px;
+      box-shadow: var(--shadow);
+      border:1px solid var(--soft-border);
+    }
+    .card .row{
+      display:flex;
+      gap:20px;
+      align-items:flex-start;
+    }
+    .left{
+      flex:1;
+    }
+    .right{
+      width:200px;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    .subtle{color:var(--muted);font-size:14px;margin-bottom:12px}
+
+    /* input */
+    .input-wrap{
+      margin-top:12px;
+      position:relative;
+    }
+    input[type="text"], input[type="password"]{
+      width:100%;
+      padding:16px 48px 16px 18px;
+      border-radius:12px;
+      background: rgba(255,255,255,0.01);
+      border:1px solid rgba(255,255,255,0.03);
+      color: #f5f5f7;
+      font-size:16px;
+      outline:none;
+      transition:box-shadow .18s, border-color .18s;
+    }
+    input:focus{
+      box-shadow: 0 8px 30px rgba(155,92,255,0.08);
+      border-color: rgba(155,92,255,0.24);
+    }
+    .input-icons{
+      position:absolute;
+      right:10px;
+      top:50%;
+      transform:translateY(-50%);
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+    .icon-btn{
+      width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+      background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03);cursor:pointer;
+      transition:transform .12s;
+    }
+    .icon-btn:active{transform:scale(.97)}
+
+    /* strength line */
+    .strength {
+      margin-top:18px;
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+    .strength .label{font-weight:700}
+    .meter{
+      flex:1;
+      height:12px;
+      background: rgba(255,255,255,0.02);
+      border-radius:999px;
+      overflow:hidden;
+      position:relative;
+      border:1px solid rgba(255,255,255,0.03);
+    }
+    .meter > i{
+      position:absolute;left:0;top:0;bottom:0;width:0%;
+      background:linear-gradient(90deg,var(--danger),var(--warn),var(--success));
+      transition:width .35s ease;
+      box-shadow:0 4px 18px rgba(155,92,255,0.06);
+    }
+    .percent{min-width:44px;text-align:right;font-weight:700}
+
+    /* criteria */
+    .criteria{
+      margin-top:18px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .badge{
+      padding:10px 14px;border-radius:12px;background:rgba(255,255,255,0.01);
+      color:var(--danger);border:1px solid rgba(255,255,255,0.02);font-weight:600;font-size:13px;
+      display:inline-flex;align-items:center;gap:8px;
+      box-shadow: inset 0 -2px 0 rgba(0,0,0,0.3);
+    }
+    .badge.valid{color: #0b0b0d;background: linear-gradient(90deg,var(--accent1),var(--accent2)); box-shadow: 0 6px 20px rgba(155,92,255,0.12);}
+
+    /* actions */
+    .actions{margin-top:20px;display:flex;gap:12px;flex-wrap:wrap}
+    .btn{
+      padding:12px 18px;border-radius:12px;border:none;cursor:pointer;font-weight:700;
+      background: linear-gradient(90deg,var(--accent1),var(--accent2));
+      color:#111; box-shadow: 0 8px 26px rgba(155,92,255,0.12);
+      transition:transform .12s, filter .12s;
+    }
+    .btn.secondary{
+      background: rgba(255,255,255,0.02);
+      color:var(--muted); border:1px solid rgba(255,255,255,0.03);
+      box-shadow:none;
+    }
+    .btn:active{transform:translateY(1px) scale(.997)}
+
+    /* right card */
+    .tip{
+      background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));
+      border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,0.03);
+    }
+
+    /* footer small */
+    .small{color:var(--muted);font-size:13px;margin-top:18px}
+
+    /* responsive */
+    @media (max-width:720px){
+      .row{flex-direction:column}
+      .right{width:100%}
+    }
+    /* ----- MODAIS ABOUT & CONTACT ----- */
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(6px);
+  z-index: 999;
+}
+
+.modal-content {
+  background: #0f0f11;
+  border: 1px solid rgba(255,255,255,0.05);
+  padding: 28px;
+  width: 90%;
+  max-width: 420px;
+  border-radius: 16px;
+  box-shadow: 0 0 30px rgba(0,0,0,0.6);
+  animation: pop .25s ease;
+}
+
+@keyframes pop {
+  from { transform: scale(.85); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+.closeModal {
+  margin-top: 16px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(90deg,#ff7bd7,#9b5cff);
+  color: #111;
+  cursor: pointer;
+  font-weight: 700;
+}
+  </style>
+</head>
+<body>
+  <div id="wrap" role="main" aria-labelledby="title">
+    <nav id="nav" aria-hidden="true">
+    <div id="btnAbout" style="cursor:pointer">About</div>
+<div id="btnContact" style="cursor:pointer">Contact</div>
+      <div style="margin-left:auto;color:var(--muted)">Dark • Premium</div>
+    </nav>
+
+    <header class="hero" aria-hidden="false">
+      <h1 id="title">Verificador de Senha — Design Premium</h1>
+      <p>Ferramenta integrada: verificação em tempo real, gerador de senhas, dicas de segurança e animações sofisticadas.</p>
+    </header>
+
+    <section class="card" aria-labelledby="formTitle">
+      <div class="row">
+        <div class="left">
+          <h2 id="formTitle" style="margin:0 0 6px 0">Senha Segura • Verificador e Gerador</h2>
+          <div class="subtle">Digite uma senha para avaliar ou gere uma nova senha forte automaticamente.</div>
+
+          <div class="input-wrap" aria-live="polite">
+            <input id="passwordInput" type="password" placeholder="Digite sua senha..." aria-label="Senha">
+            <div class="input-icons">
+              <button id="toggleEye" class="icon-btn" title="Mostrar/Ocultar senha" aria-pressed="false" aria-label="Mostrar senha">
+                <!-- eye svg -->
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 5c5 0 9.1 3.2 10.6 7-1.5 3.8-5.6 7-10.6 7S2.9 15.8 1.4 12C2.9 8.2 7 5 12 5z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.2"></circle></svg>
+              </button>
+
+              <button id="pasteBtn" class="icon-btn" title="Colar senha (Ctrl+V)" aria-label="Colar senha">
+                <!-- paste svg -->
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M16 4h-4l-1-1h-4a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V6a2 2 0 0 0-2-2z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="strength" aria-hidden="false" style="margin-top:14px">
+            <div class="label" id="strengthLabel">Força da senha: <span id="strengthText">Fraca 😟</span></div>
+          </div>
+
+          <div class="strength" style="margin-top:8px">
+            <div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Força da senha">
+              <i id="meterFill"></i>
+            </div>
+            <div class="percent" id="percentText">0%</div>
+          </div>
+
+          <div class="criteria" id="criteria">
+            <div class="badge" data-criteria="length">• Mínimo 8 caracteres</div>
+            <div class="badge" data-criteria="upper">• Contém letra maiúscula</div>
+            <div class="badge" data-criteria="lower">• Contém letra minúscula</div>
+            <div class="badge" data-criteria="number">• Contém número</div>
+            <div class="badge" data-criteria="special">• Contém caractere especial</div>
+          </div>
+
+          <div class="small" style="margin-top:14px">Clique em Gerar para criar uma senha forte</div>
+
+          <div class="actions" style="margin-top:10px">
+            <button class="btn" id="gen16" aria-label="Gerar 16">Gerar 16</button>
+            <button class="btn" id="gen24" aria-label="Gerar 24">Gerar 24</button>
+
+            <button class="btn secondary" id="copyBtn" aria-label="Copiar senha">Copiar</button>
+            <button class="btn secondary" id="useBtn" aria-label="Usar senha">Usar</button>
+          </div>
+
+          <div class="small" style="margin-top:16px">Dica rápida: Use uma frase longa (passphrase) — fácil de lembrar, difícil de adivinhar.</div>
+        </div>
+
+        <aside class="right" aria-label="Seu assistente de segurança">
+          <div class="tip">
+            <strong>Seu assistente de segurança</strong>
+            <p style="margin-top:8px;color:var(--muted);font-size:14px">
+              Senhas longas e únicas + gerenciador de senhas = segurança real. Evite usar dados pessoais e frases conhecidas.
+            </p>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </div>
+<!-- Modal ABOUT -->
+<div id="modalAbout" class="modal">
+  <div class="modal-content">
+    <h2>Sobre o Projeto</h2>
+    <p>Este verificador foi criado com design premium, UI moderna e animações suaves.</p>
+    <button class="closeModal">Fechar</button>
+  </div>
+</div>
+
+<!-- Modal CONTACT -->
+<div id="modalContact" class="modal">
+  <div class="modal-content">
+    <h2>Contato</h2>
+    <p>E-mail:claytondev6@gmail.com<br>Instagram:c.santosx_</p>
+    <button class="closeModal">Fechar</button>
+  </div>
+</div>
+  <script>
+    // --- helpers ---
+    const $ = sel => document.querySelector(sel);
+    const $$ = sel => Array.from(document.querySelectorAll(sel));
+
+    const passwordInput = $('#passwordInput');
+    const meterFill = $('#meterFill');
+    const percentText = $('#percentText');
+    const strengthText = $('#strengthText');
+    const badges = $$('#criteria .badge');
+    const toggleEye = $('#toggleEye');
+    const gen16 = $('#gen16'), gen24 = $('#gen24');
+    const copyBtn = $('#copyBtn'), useBtn = $('#useBtn');
+    const pasteBtn = $('#pasteBtn');
+
+    // Regex checks
+    const checks = {
+      length: pw => pw.length >= 8,
+      upper: pw => /[A-Z]/.test(pw),
+      lower: pw => /[a-z]/.test(pw),
+      number: pw => /[0-9]/.test(pw),
+      special: pw => /[^A-Za-z0-9]/.test(pw)
+    };
+
+    function evaluatePassword(pw) {
+      const results = {};
+      let passed = 0;
+      for (const k in checks) {
+        const ok = checks[k](pw);
+        results[k] = ok;
+        if (ok) passed++;
+      }
+      // percent based on number of checks
+      const percent = Math.round((passed / Object.keys(checks).length) * 100);
+      return {results, percent, passed};
+    }
+
+    function updateUI() {
+      const pw = passwordInput.value || '';
+      const {results, percent, passed} = evaluatePassword(pw);
+
+      // update meter
+      meterFill.style.width = percent + '%';
+      percentText.textContent = percent + '%';
+      meterFill.parentElement.setAttribute('aria-valuenow', percent);
+
+      // strength label
+      if (percent === 0) {
+        strengthText.textContent = 'Fraca 😟';
+      } else if (percent < 50) {
+        strengthText.textContent = 'Fraca 😕';
+      } else if (percent < 80) {
+        strengthText.textContent = 'Média 🙂';
+      } else {
+        strengthText.textContent = 'Forte 😎';
+      }
+
+      // color gradient shift (approx)
+      // set background gradient width via stop points (kept simple)
+      // update badge classes
+      badges.forEach(b => {
+        const key = b.getAttribute('data-criteria');
+        if (results[key]) b.classList.add('valid'); else b.classList.remove('valid');
+      });
+
+      // accessible label change
+      const label = `Força da senha ${strengthText.textContent}, ${percent} por cento`;
+      document.getElementById('strengthLabel').setAttribute('aria-label', label);
+    }
+
+    // Ensure UI updates as user types
+    passwordInput.addEventListener('input', updateUI);
+
+    // toggle visibility
+    toggleEye.addEventListener('click', () => {
+      const isPwd = passwordInput.type === 'password';
+      passwordInput.type = isPwd ? 'text' : 'password';
+      toggleEye.setAttribute('aria-pressed', String(isPwd));
+      toggleEye.title = isPwd ? 'Ocultar' : 'Mostrar';
+    });
+
+    // simple paste helper (try to paste from clipboard)
+    pasteBtn.addEventListener('click', async () => {
+      try {
+        const text = await navigator.clipboard.readText();
+        if (text) {
+          passwordInput.value = text;
+          updateUI();
+        }
+      } catch (e) {
+        // fallback: focus input so user can paste manually
+        passwordInput.focus();
+      }
+    });
+
+    // password generator: ensures at least one char from each group when possible
+    function generatePassword(length = 16) {
+      const uppers = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      const lowers = 'abcdefghijklmnopqrstuvwxyz';
+      const numbers = '0123456789';
+      const specials = '!@#$%^&*()-_=+[]{};:,.<>/?|~`';
+      const all = uppers + lowers + numbers + specials;
+
+      const required = [uppers, lowers, numbers, specials];
+      const pw = [];
+
+      // if length < required types, fill randomly
+      if (length >= required.length) {
+        // ensure at least one of each required group
+        for (let group of required) {
+          pw.push(group[Math.floor(Math.random()*group.length)]);
+        }
+        // fill remaining
+        for (let i = pw.length; i < length; i++) {
+          pw.push(all[Math.floor(Math.random()*all.length)]);
+        }
+      } else {
+        // length smaller than number of required groups - just random from all
+        for (let i=0;i<length;i++) pw.push(all[Math.floor(Math.random()*all.length)]);
+      }
+
+      // shuffle array
+      for (let i = pw.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [pw[i], pw[j]] = [pw[j], pw[i]];
+      }
+      return pw.join('');
+    }
+
+    gen16.addEventListener('click', () => {
+      passwordInput.value = generatePassword(16);
+      passwordInput.type = 'text';
+      updateUI();
+    });
+    gen24.addEventListener('click', () => {
+      passwordInput.value = generatePassword(24);
+      passwordInput.type = 'text';
+      updateUI();
+    });
+
+    // copy to clipboard
+    copyBtn.addEventListener('click', async () => {
+      const val = passwordInput.value || '';
+      if (!val) {
+        // small feedback: briefly focus
+        passwordInput.focus();
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(val);
+        copyBtn.textContent = 'Copiado ✓';
+        setTimeout(()=> copyBtn.textContent = 'Copiar', 1500);
+      } catch (e) {
+        // fallback: select and execCommand
+        passwordInput.select();
+        document.execCommand('copy');
+        copyBtn.textContent = 'Copiado ✓';
+        setTimeout(()=> copyBtn.textContent = 'Copiar', 1500);
+      }
+    });
+
+    // "Usar" — example behavior: masks password and maybe simulate sending someplace
+    useBtn.addEventListener('click', () => {
+      // for demo: momentarily show check and keep value
+      if (!passwordInput.value) {
+        passwordInput.focus();
+        return;
+      }
+      useBtn.textContent = 'Usada ✓';
+      setTimeout(()=> useBtn.textContent = 'Usar', 1500);
+    });
+
+    // initial update
+    updateUI();
+
+    // keyboard shortcut: Ctrl+G to generate (16)
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'g') {
+        e.preventDefault();
+        passwordInput.value = generatePassword(16);
+        passwordInput.type = 'text';
+        updateUI();
+      }
+    });
+
+    // small accessibility: allow clicking badges to copy suggested pattern text (not necessary but handy)
+    badges.forEach(b => {
+      b.addEventListener('click', () => {
+        // brief pulse
+        b.animate([{transform:'scale(1)'},{transform:'scale(0.98)'},{transform:'scale(1)'}],{duration:180});
+      });
+    });
+// ----- MODAL SYSTEM -----
+
+const modalAbout = document.getElementById("modalAbout");
+const modalContact = document.getElementById("modalContact");
+
+const btnAbout = document.getElementById("btnAbout");
+const btnContact = document.getElementById("btnContact");
+
+const closeButtons = document.querySelectorAll(".closeModal");
+
+// abrir modal About
+btnAbout.addEventListener("click", () => {
+  modalAbout.style.display = "flex";
+});
+
+// abrir modal Contact
+btnContact.addEventListener("click", () => {
+  modalContact.style.display = "flex";
+});
+
+// fechar modal pelos botões
+closeButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    btn.parentElement.parentElement.style.display = "none";
+  });
+});
+
+// fechar modal clicando fora
+window.addEventListener("click", (e) => {
+  if (e.target.classList.contains("modal")) {
+    e.target.style.display = "none";
+  }
+});
+  </script>
+</body>
+</html>
