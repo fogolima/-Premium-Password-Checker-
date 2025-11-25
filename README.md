@@ -25,7 +25,7 @@ Construído apenas com **HTML, CSS e JavaScript**, é perfeito para estudo, port
 Se você ativou o GitHub Pages:
 
 🔗 **Acesse o site:**  
-`https://seu-usuario.github.io/password-checker-premium/`  
+https://fogolima.github.io/-Premium-Password-Checker-/
 
 (Substitua *seu-usuario* pelo seu nome do GitHub.)
 
